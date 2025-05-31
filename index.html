@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora Hazen-Williams</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+  <div class="container">
+    <h1>Calculadora Hazen-Williams</h1>
+    <label>Diámetro (m):
+      <input type="number" id="diametro" value="0.1524" step="0.01" />
+    </label>
+    <label>Coeficiente C:
+      <input type="number" id="coeficiente" value="140" step="5" />
+    </label>
+    <label>Caudal Q (m³/s):
+      <input type="number" id="caudal" value="0.01" step="0.001" />
+    </label>
+    <label>Longitud (m):
+      <input type="number" id="longitud" value="100" />
+    </label>
+    <button onclick="calcular()">Calcular</button>
+    <h2 id="resultado">Pérdida de carga: -</h2>
+  </div>
+  <script src="script.js"></script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
+  }
+</script>
+
+</body>
+</html>
