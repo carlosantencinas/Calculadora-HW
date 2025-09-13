@@ -1,0 +1,22 @@
+{
+  "name": "Calculadora de Pérdida de Carga",
+  "short_name": "PérdidaCarga",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1e3a8a",
+  "orientation": "portrait",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icons/perdidaHW.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/perdidaHW512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

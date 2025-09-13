@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+  <link rel="icon" href="icons/perdidaHW512.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/perdidaHW512.png">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="manifest" href="manifest.json">
+  <title>Calculadora Hazen-Williams</title>
+  <style>
+  .coeficiente-selector {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .coeficiente-selector select {
+    flex: 2;
+  }
+
+  .coeficiente-selector input {
+    flex: 1;
+  }
+
+  .material-info {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--secondary-color);
+    border-radius: 6px;
+  }
+</style>
+
+  <style>
+    :root {
+      --primary-color: #1a73e8;
+      --primary-light: #e8f0fe;
+      --secondary-color: #f8f9fa;
+      --text-color: #202124;
+      --text-secondary: #5f6368;
+      --border-color: #dadce0;
+      --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700; /* Cambiado de 400 a 700 para negrita */
+    color: var(--primary-color);
+    font-size: 2.2rem; /* Aumentado el tamaño para mayor énfasis */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil para resaltar */
+    letter-spacing: -0.5px; /* Espaciado ligeramente más compacto */
+  }
+
+    h3 {
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .input-unit {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="number"], select {
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 16px;
+      transition: var(--transition);
+      flex: 1;
+    }
+
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      margin-bottom: 10px;
+      -webkit-appearance: none;
+      height: 4px;
+      background: var(--border-color);
+      border-radius: 2px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    .range-value {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .range-display {
+      padding: 8px 12px;
+      background: var(--secondary-color);
+      border-radius: 8px;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #0d62d0;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #resultados {
+      background: var(--primary-light);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .result-card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .result-card h4 {
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .result-value {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--primary-color);
+    }
+
+    .result-unit {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-left: 4px;
+    }
+
+    .range-info {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding: 8px 12px;
+      background: #fff8e1;
+      border-radius: 6px;
+      border-left: 3px solid #ffc107;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin-top: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      
+      #resultados {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      #resultados {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculadora de Pérdida de Carga - Hazen-Williams</h1>
+
+  <div class="card">
+    <h3>Ingreso de Datos</h3>
+    
+    <form id="calc-form">
+      <div class="form-grid">
+        <div class="field-group">
+          <label for="diam">Diámetro:</label>
+          <div class="input-unit">
+            <input type="number" id="diam" step="0.0001" value="6.0" min="0.01" />
+            <select id="diam_unit">
+              <option>pulgadas</option>
+              <option>mm</option>
+              <option>m</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="caudal">Caudal:</label>
+          <div class="input-unit">
+            <input type="number" id="caudal" step="0.0001" value="10.0" min="0.001" />
+            <select id="caudal_unit">
+              <option>L/s</option>
+              <option>m³/s</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="long">Longitud:</label>
+          <input type="range" id="long" step="1" value="100" min="1" max="1000" />
+          <div class="range-value">
+            <div class="range-display">
+              <span id="long-value">100</span>
+              <select id="long_unit">
+                <option>m</option>
+                <option>km</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+  <label for="c">Coeficiente C (Hazen-Williams):</label>
+  <div class="coeficiente-selector">
+    <select id="c_preset">
+      <option value="custom">Personalizado</option>
+      <option value="150" selected>PVC, HDPE O plástico (150)</option>
+      <option value="140">Fibrocemento nuevo (140)</option>
+      <option value="130">Acero nuevo (130)</option>
+      <option value="120">Hierro fundido nuevo (120)</option>
+      <option value="100">Acero soldado (100)</option>
+      <option value="90">Hierro fundido 20 años (90)</option>
+      <option value="80">Concreto (80)</option>
+      <option value="60">Hierro fundido 40 años (60)</option>
+    </select>
+    <input type="number" id="c" step="5" value="150" min="10"/>
+  </div>
+  <div class="material-info" id="material-info">
+    PVC o plástico: Alta resistencia a la corrosión y bajo coeficiente de rugosidad
+  </div>
+</div>
+      </div>
+
+      <button type="submit">Calcular</button>
+    </form>
+  </div>
+
+  <div id="resultados"></div>
+
+
+
+  <div class="card">
+    <h3>Gráfico de Pérdidas y Velocidades</h3>
+    <div class="chart-container">
+      <canvas id="grafico"></canvas>
+    </div>
+  </div>
+
+    <div class="card">
+    <h3>Análisis de Caudales Recomendados</h3>
+    <div id="caudal-range-results"></div>
+  </div>
+
+
+<script>
+  // Información sobre los materiales
+  const materialInfo = {
+    '150': 'PVC o plástico: Alta resistencia a la corrosión y bajo coeficiente de rugosidad',
+    '140': 'Fibrocemento nuevo: Material liso con buen comportamiento hidráulico',
+    '130': 'Acero nuevo: Superficie lisa con buena resistencia a la corrosión',
+    '120': 'Hierro fundido nuevo: Material común en tuberías de agua',
+    '100': 'Acero soldado: Juntas soldadas que aumentan ligeramente la rugosidad',
+    '90': 'Hierro fundido 20 años: Moderada corrosión y deposición de sedimentos',
+    '80': 'Concreto: Superficie más rugosa que reduce el coeficiente',
+    '60': 'Hierro fundido 40 años: Alta corrosión y deposición de sedimentos',
+    'custom': 'Valor personalizado según condiciones específicas de la tubería'
+  };
+
+  // Manejar el cambio de selección de coeficiente
+  document.getElementById('c_preset').addEventListener('change', function() {
+    const cInput = document.getElementById('c');
+    const materialInfoDiv = document.getElementById('material-info');
+    
+    if (this.value === 'custom') {
+      cInput.focus();
+    } else {
+      cInput.value = this.value;
+      materialInfoDiv.textContent = materialInfo[this.value];
+    }
+  });
+
+  // Permitir edición manual manteniendo la selección en "Personalizado"
+  document.getElementById('c').addEventListener('input', function() {
+    const presetSelect = document.getElementById('c_preset');
+    const materialInfoDiv = document.getElementById('material-info');
+    
+    // Si el usuario modifica manualmente el valor, cambiar a personalizado
+    if (presetSelect.value !== 'custom') {
+      presetSelect.value = 'custom';
+      materialInfoDiv.textContent = materialInfo['custom'];
+    }
+  });
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let grafico;
+
+    function convertirUnidadLongitud(valor, unidad) {
+      if (unidad === 'km') return valor * 1000;
+      return valor; // m
+    }
+
+    function convertirUnidadCaudal(valor, unidad) {
+      if (unidad === 'L/s') return valor / 1000; // pasar L/s a m³/s
+      return valor; // m³/s
+    }
+
+    function convertirDiametroAMetros(valor, unidad) {
+      if (unidad === 'pulgadas') return valor * 0.0254;
+      if (unidad === 'mm') return valor / 1000;
+      return valor; // metros
+    }
+
+    // Función para calcular caudal mínimo y máximo según velocidades recomendadas
+    function calcularCaudalesPorVelocidad(diam, vMin = 0.3, vMax = 2.5) {
+      // Calcular área de la sección transversal
+      const area = Math.PI * Math.pow(diam / 2, 2);
+      
+      // Calcular caudales para velocidades mínima y máxima
+      const qMin = vMin * area; // m³/s
+      const qMax = vMax * area; // m³/s
+      
+      return { qMin, qMax };
+    }
+
+    function actualizarGrafico(Q, L, C) {
+      // Diámetros fijos en pulgadas para comparar pérdidas y velocidades
+      const diametrosPulgadas = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22];
+      const diametros = diametrosPulgadas.map(p => p * 0.0254);
+
+      const perdidas = diametros.map(d => {
+        return 10.67 * L * Math.pow(Q, 1.852) / (Math.pow(C, 1.852) * Math.pow(d, 4.87));
+      });
+
+      const velocidades = diametros.map(d => {
+        return (4 * Q) / (Math.PI * Math.pow(d, 2));
+      });
+
+      const etiquetas = diametros.map(d => `${(d / 0.0254).toFixed(2)} pulg`);
+
+      const ctx = document.getElementById('grafico').getContext('2d');
+
+      if (grafico) {
+        grafico.data.labels = etiquetas;
+        grafico.data.datasets[0].data = perdidas;
+        grafico.data.datasets[1].data = velocidades;
+        grafico.update();
+      } else {
+        grafico = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: etiquetas,
+            datasets: [
+              {
+                label: 'Pérdida de carga (m)',
+                data: perdidas,
+                fill: false,
+                borderColor: '#1a73e8',
+                backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                tension: 0.3,
+                pointRadius: 4,
+                yAxisID: 'y',
+              },
+              {
+                label: 'Velocidad (m/s)',
+                data: velocidades,
+                fill: false,
+                borderColor: '#ea4335',
+                borderDash: [5, 5],
+                tension: 0.3,
+                pointRadius: 4,
+                yAxisID: 'y1',
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { 
+                display: true,
+                position: 'top'
+              },
+              tooltip: { 
+                mode: 'index', 
+                intersect: false 
+              }
+            },
+            scales: {
+              x: {
+                title: { 
+                  display: true, 
+                  text: 'Diámetro (pulgadas)' 
+                }
+              },
+              y: {
+                beginAtZero: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'Pérdida de carga (m)'
+                }
+              },
+              y1: {
+                beginAtZero: true,
+                position: 'right',
+                grid: { drawOnChartArea: false },
+                title: {
+                  display: true,
+                  text: 'Velocidad (m/s)'
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // Función para calcular la pérdida de carga con los datos ingresados
+    function calcularPerdida(Q, L, C, d) {
+      // d en metros
+      return 10.67 * L * Math.pow(Q, 1.852) / (Math.pow(C, 1.852) * Math.pow(d, 4.87));
+    }
+    
+    // Función para calcular la VELOCIDAD con los datos ingresados
+    function calcularVelocidad(Q, d) {
+      // d en metros
+      return (4 * Q) / (Math.PI * Math.pow(d, 2)); 
+    }
+
+    document.getElementById('calc-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Leer datos del formulario
+      const diamInput = parseFloat(document.getElementById('diam').value);
+      const diamUnit = document.getElementById('diam_unit').value;
+
+      const caudalInput = parseFloat(document.getElementById('caudal').value);
+      const caudalUnit = document.getElementById('caudal_unit').value;
+
+      const longInput = parseFloat(document.getElementById('long').value);
+      const longUnit = document.getElementById('long_unit').value;
+
+      const C = parseFloat(document.getElementById('c').value);
+
+      if (isNaN(diamInput) || diamInput <= 0 ||
+          isNaN(caudalInput) || caudalInput <= 0 ||
+          isNaN(longInput) || longInput <= 0 ||
+          isNaN(C) || C <= 0) {
+        alert('Por favor ingresa valores positivos válidos para todos los campos.');
+        return;
+      }
+
+      // Convertir unidades a sistema métrico estándar
+      const diam = convertirDiametroAMetros(diamInput, diamUnit);
+      const Q = convertirUnidadCaudal(caudalInput, caudalUnit);
+      const L = convertirUnidadLongitud(longInput, longUnit);
+
+      // Calcular pérdida solo para diámetro ingresado
+      const perdidaCalculada = calcularPerdida(Q, L, C, diam);
+      const velocidadCalculada = calcularVelocidad(Q, diam);
+
+      // Calcular caudales mínimo y máximo recomendados
+      const { qMin, qMax } = calcularCaudalesPorVelocidad(diam);
+      const qMinLps = qMin * 1000; // Convertir a L/s
+      const qMaxLps = qMax * 1000; // Convertir a L/s
+
+      // Mostrar resultados principales
+      const resultadosDiv = document.getElementById('resultados');
+      resultadosDiv.innerHTML = `
+        <div class="result-card">
+          <h4>PÉRDIDA DE CARGA</h4>
+          <div class="result-value">${perdidaCalculada.toFixed(3)}<span class="result-unit">m</span></div>
+        </div>
+        <div class="result-card">
+          <h4>VELOCIDAD</h4>
+          <div class="result-value">${velocidadCalculada.toFixed(3)}<span class="result-unit">m/s</span></div>
+        </div>
+        <div class="result-card">
+          <h4>CAUDAL MÍNIMO</h4>
+          <div class="result-value">${qMinLps.toFixed(2)}<span class="result-unit">L/s</span></div>
+          <div class="range-info">Para velocidad ≥ 0.3 m/s y evitar sedimentación</div>
+        </div>
+        <div class="result-card">
+          <h4>CAUDAL MÁXIMO</h4>
+          <div class="result-value">${qMaxLps.toFixed(2)}<span class="result-unit">L/s</span></div>
+          <div class="range-info">Para velocidad ≤ 2.5 m/s y evitar erosión y vibraciones</div>
+        </div>
+      `;
+
+      // Mostrar información adicional sobre caudales recomendados
+      const caudalRangeDiv = document.getElementById('caudal-range-results');
+      caudalRangeDiv.innerHTML = `
+        <p>Para el diámetro seleccionado (${diamInput} ${diamUnit}), los caudales recomendados son:</p>
+        <ul>
+          <li><strong>Caudal mínimo:</strong> ${qMinLps.toFixed(2)} L/s (velocidad ≥ 0.3 m/s)</li>
+          <li><strong>Caudal máximo:</strong> ${qMaxLps.toFixed(2)} L/s (velocidad ≤ 2.5 m/s)</li>
+        </ul>
+        <p>El caudal ingresado (${caudalInput} ${caudalUnit}) 
+          ${Q*1000 >= qMinLps && Q*1000 <= qMaxLps ? 
+            '<span style="color:green">está dentro del rango recomendado</span>' : 
+            '<span style="color:red">está fuera del rango recomendado</span>'}.
+        </p>
+      `;
+
+      // Actualizar gráfico con los valores ingresados
+      actualizarGrafico(Q, L, C);
+    });
+
+    // Control del slider de longitud
+    const sliderLong = document.getElementById('long');
+    const longValueDisplay = document.getElementById('long-value');
+    
+    function updateLongValue() {
+      longValueDisplay.textContent = sliderLong.value;
+    }
+    
+    sliderLong.addEventListener('input', updateLongValue);
+    updateLongValue();
+
+    // Inicializar Service Worker si está disponible
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registrado', reg))
+        .catch(err => console.log('Error SW', err));
+    }
+  </script>
+</body>
+<footer style="text-align: center; margin-top: 40px; padding: 20px; color: var(--text-secondary); font-size: 14px;">
+    ⚙️ Desarrollado por Carlos Antequera <a href="mailto:carlosantencinas@gmail.com" style="color: var(--primary-color); text-decoration: none;">carlosantencinas@gmail.com</a> Ver 2.2.1
+</footer>
+</html>
